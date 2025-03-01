@@ -1,8 +1,8 @@
-import { 
-    Connection, PublicKey, Transaction, sendAndConfirmTransaction, LAMPORTS_PER_SOL 
+import {
+    Connection, PublicKey, Transaction, sendAndConfirmTransaction, LAMPORTS_PER_SOL
 } from '@solana/web3.js';
-import { 
-    getOrCreateAssociatedTokenAccount, createTransferInstruction, getMint, getAssociatedTokenAddress 
+import {
+    getOrCreateAssociatedTokenAccount, createTransferInstruction, getMint, getAssociatedTokenAddress
 } from '@solana/spl-token';
 
 // Default RPC connection
@@ -20,15 +20,19 @@ type TransactionResult = {
 
 // ✅ Send tokens using a connected wallet
 export async function sendTokens(
-    wallet: any, // Wallet adapter
+    publicKey: string,
+    signTransaction: any,
     recipientAddress: string,
     mintAddress: string,
     amount: number
 ): Promise<TransactionResult> {
     try {
-        if (!wallet.publicKey) throw new Error("Wallet not connected");
+        // Debugging logs
+        console.log("Sender public key:", publicKey);
+        console.log("Recipient address:", recipientAddress);
+        console.log("Mint address:", mintAddress);
 
-        const sender = wallet.publicKey;
+        const sender = new PublicKey(publicKey);
         const recipient = new PublicKey(recipientAddress);
         const mint = new PublicKey(mintAddress);
 
@@ -43,13 +47,16 @@ export async function sendTokens(
             mint,
             sender
         );
+        console.log("Sender token account:", senderTokenAccount.address.toString());
 
         const recipientTokenAccount = await getOrCreateAssociatedTokenAccount(
             connection,
             sender,
             mint,
-            recipient
+            recipient,
         );
+
+        console.log("Recipient token account:", recipientTokenAccount.address.toString());
 
         // Create transfer instruction
         const transferInstruction = createTransferInstruction(
@@ -64,7 +71,7 @@ export async function sendTokens(
         transaction.feePayer = sender;
         transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
-        const signedTransaction = await wallet.signTransaction(transaction);
+        const signedTransaction = await signTransaction(transaction);
         const signature = await connection.sendRawTransaction(signedTransaction.serialize());
 
         return {
@@ -83,7 +90,7 @@ export async function sendTokens(
 
 // ✅ Create a token account with a connected wallet
 export async function createTokenAccount(
-    wallet: any, 
+    wallet: any,
     mintAddress: string
 ): Promise<TransactionResult> {
     try {

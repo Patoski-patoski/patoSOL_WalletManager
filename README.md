@@ -1,6 +1,16 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# **Getting Started**
 
-## Getting Started
+**`patoSOL Solana Wallet Manager`**
+
+patoSOL is a solana wallet manager.
+
+
+
+
+
+### Pages
+
+- **The Analytics page** is designed to provide a comprehensive overview of a user's wallet on the Solana blockchain. It includes various components and functionalities to display and manage token balances, historical data, and other relevant statistics.
 
 First, run the development server:
 

@@ -17,7 +17,7 @@ export default function Home() {
   // Replace with your actual token mint address
   const TOKEN_MINT_ADDRESS =
     process.env.NEXT_PUBLIC_TOKEN_MINT_ADDRESS ||
-    "4R1SjTQjqDDzMPgsuL2oD2bzHAotB1cqi2B8EFScgWmc";
+    "4R1SjTQjqDDzMPgsuL2oD2bzHAotB1cqi2B8EFScgWmc"; 
 
   useEffect(() => {
     async function loadTokenInfo() {

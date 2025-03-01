@@ -25,14 +25,21 @@ import { ReceiveTokens } from "@/components/receive-tokens";
 import { CreateTokenAccount } from "@/components/create-token-account";
 import { TokenActivity } from "@/components/token-activity";
 import { getTokenInfo } from "@/lib/token-utils";
+import axios from "axios";
 
 // Define interfaces
 export interface TokenBalance {
   mint: string;
   owner: string;
-  symbol: string;
+  tokenAmount: {
+    amount: string;
+    decimals: number;
+    uiAmount: number;
+  };
   uiBalance: number;
   decimals: number;
+  symbol?: string;
+  name?: string;
 }
 
 interface TokenHistoricalData {
@@ -65,18 +72,14 @@ export default function Analytics() {
   const { publicKey, connected } = useWallet();
   const [isLoading, setIsLoading] = useState(true);
   const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>([]);
-  const [historicalData, setHistoricalData] = useState<TokenHistoricalData[]>(
-    []
-  );
+  const [historicalData, setHistoricalData] = useState<TokenHistoricalData[]>([]);
   const [walletStats, setWalletStats] = useState<WalletStats>({
     totalValue: 0,
     tokenCount: 0,
     transactionCount: 0,
     lastTransactionDate: "",
   });
-  const [tokenDistribution, setTokenDistribution] = useState<
-    TokenDistribution[]
-  >([]);
+  const [tokenDistribution, setTokenDistribution] = useState<TokenDistribution[]>([]);
   const [selectedTokenMint, setSelectedTokenMint] = useState<string>("");
 
   // Function to refresh wallet data
@@ -86,8 +89,7 @@ export default function Analytics() {
     setIsLoading(true);
     try {
       const connection = new Connection(
-        process.env.NEXT_PUBLIC_SOLANA_RPC_URL ||
-          "https://api.devnet.solana.com",
+        process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.devnet.solana.com",
         "confirmed"
       );
 
@@ -119,10 +121,7 @@ export default function Analytics() {
       setTokenBalances(balances);
 
       // Calculate wallet stats
-      const totalValue = balances.reduce(
-        (sum, token) => sum + token.uiBalance,
-        0
-      );
+      const totalValue = balances.reduce((sum, token) => sum + token.uiBalance, 0);
 
       // Get recent transactions
       const signatures = await connection.getSignaturesForAddress(publicKey, {
@@ -140,25 +139,16 @@ export default function Analytics() {
       });
 
       // Create token distribution data
-      // Create token distribution data
-      const distribution = balances
-        .filter((token) => token.uiBalance > 0) // Only include tokens with balance
-        .map((token) => ({
-          name: token.symbol || token.mint.slice(0, 4) + "...",
-          value: parseFloat(token.uiBalance.toFixed(2)), // Ensure numbers are formatted correctly
-        }));
-
-      // If no tokens with balance, add a placeholder
+      const distribution = balances.filter((token) => token.uiBalance > 0).map((token) => ({
+        name: token.symbol || token.mint.slice(0, 4) + "...",
+        value: parseFloat(token.uiBalance.toFixed(2)),
+      }));
       if (distribution.length === 0) {
-        distribution.push({
-          name: "No tokens",
-          value: 1,
-        });
+        distribution.push({ name: "No tokens", value: 1 });
       }
-
       setTokenDistribution(distribution);
 
-      // Fetch historical data from an API
+      // Fetch historical data from the API
       const historicalData = await fetchHistoricalData(publicKey.toString());
       setHistoricalData(historicalData);
     } catch (error) {
@@ -168,62 +158,26 @@ export default function Analytics() {
     }
   };
 
-  // Function to fetch historical data from an API
-const fetchHistoricalData = async (
-  walletAddress: string
-): Promise<TokenHistoricalData[]> => {
-  try {
-    const response = await fetch(
-      `/api/historical-data?address=${walletAddress}`
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch historical data");
+  // Function to fetch historical data from the API
+  const fetchHistoricalData = async (walletAddress: string): Promise<TokenHistoricalData[]> => {
+    try {
+      const response = await axios.get(`/api/historical-data?address=${walletAddress}`);
+      console.log("fetch data", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching historical data:", error);
+      return [];
     }
-    const data = await response.json();
-
-    // Check if data is empty or invalid
-    if (!Array.isArray(data) || data.length === 0) {
-      console.warn("Historical data is empty or invalid, using fallback data");
-      return generateFallbackHistoricalData();
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Error fetching historical data:", error);
-    // Return fallback data instead of empty array
-    return generateFallbackHistoricalData();
-  }
-};
-
-// Generate some fallback data for when the API fails
-const generateFallbackHistoricalData = (): TokenHistoricalData[] => {
-  const now = new Date();
-  return Array.from({ length: 30 }, (_, i) => {
-    const date = new Date();
-    date.setDate(now.getDate() - (29 - i));
-    return {
-      date: date.toLocaleDateString(),
-      balance: walletStats.totalValue * (0.9 + i * 0.005), // Simulate some random variation
-    };
-  });
-};
+  };
 
   // Initial data load
-useEffect(() => {
-  if (connected && publicKey) {
-    refreshWallet();
-  } else {
-    setIsLoading(false);
-  }
-}, [connected, publicKey]);
-
-// Add this effect to debug your data
-useEffect(() => {
-  console.log("Token Balances:", tokenBalances);
-  console.log("Historical Data:", historicalData);
-  console.log("Token Distribution:", tokenDistribution);
-}, [tokenBalances, historicalData, tokenDistribution]);
-  
+  useEffect(() => {
+    if (connected && publicKey) {
+      refreshWallet();
+    } else {
+      setIsLoading(false);
+    }
+  }, [connected, publicKey]);
 
   // Render wallet not connected state
   if (!connected) {
@@ -268,10 +222,7 @@ useEffect(() => {
         <div className="flex space-x-2">
           <CreateTokenAccount refreshWallet={refreshWallet} />
           <ReceiveTokens walletAddress={publicKey?.toString() || ""} />
-          <SendTokens
-            tokenBalances={tokenBalances}
-            refreshWallet={refreshWallet}
-          />
+          <SendTokens tokenBalances={tokenBalances} refreshWallet={refreshWallet} />
           <Button variant="outline" onClick={refreshWallet} className="gap-2">
             <Loader2 className="h-4 w-4" />
             Refresh
@@ -287,9 +238,7 @@ useEffect(() => {
             <CardTitle className="text-sm font-medium">Total Value</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">
-              {walletStats.totalValue.toFixed(2)}
-            </p>
+            <p className="text-2xl font-bold">{walletStats.totalValue.toFixed(2)}</p>
           </CardContent>
         </Card>
 
@@ -377,12 +326,7 @@ useEffect(() => {
                     />
                   ))}
                 </Pie>
-                <Tooltip
-                  formatter={(value) => [
-                    `${Number(value).toFixed(2)}`,
-                    "Balance",
-                  ]}
-                />
+                <Tooltip formatter={(value) => [`${Number(value).toFixed(2)}`, "Balance"]} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -397,9 +341,7 @@ useEffect(() => {
         </CardHeader>
         <CardContent>
           {tokenBalances.length === 0 ? (
-            <p className="text-center text-gray-500 py-4">
-              No tokens found in this wallet
-            </p>
+            <p className="text-center text-gray-500 py-4">No tokens found in this wallet</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full table-auto">

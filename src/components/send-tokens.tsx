@@ -1,4 +1,3 @@
-// patosol/src/components/send-tokens.tsx
 "use client";
 
 import { useState } from "react";
@@ -32,7 +31,7 @@ export function SendTokens({
   tokenBalances: TokenBalance[];
   refreshWallet: () => void;
 }) {
-  const { publicKey } = useWallet();
+  const { publicKey, connected, signTransaction } = useWallet();
   const [open, setOpen] = useState(false);
   const [selectedToken, setSelectedToken] = useState("");
   const [recipient, setRecipient] = useState("");
@@ -41,8 +40,15 @@ export function SendTokens({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Debugging logs
+  console.log("Wallet connected:", connected);
+  console.log("Public key:", publicKey?.toString());
+
   const handleSend = async () => {
-    if (!publicKey) return;
+    if (!publicKey || !signTransaction) {
+      setError("Wallet not connected");
+      return;
+    }
 
     if (!selectedToken || !recipient || !amount) {
       setError("Please fill all fields");
@@ -53,8 +59,16 @@ export function SendTokens({
       setIsLoading(true);
       setError(null);
 
+      // Debugging logs
+      console.log("Sending tokens with the following details:");
+      console.log("Sender public key:", publicKey.toString());
+      console.log("Recipient address:", recipient);
+      console.log("Mint address:", selectedToken);
+      console.log("Amount:", amount);
+
       const result = await sendTokens(
         publicKey.toString(),
+        signTransaction,
         recipient,
         selectedToken,
         parseFloat(amount)
@@ -70,6 +84,7 @@ export function SendTokens({
         setError(result.message);
       }
     } catch (err) {
+      console.error("Transaction error:", err);
       setError("Transaction failed. Please try again.");
     } finally {
       setIsLoading(false);
