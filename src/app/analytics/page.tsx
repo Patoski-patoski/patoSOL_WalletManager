@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { AuthButton } from "@/components/auth-button";
@@ -24,7 +24,6 @@ import { SendTokens } from "@/components/send-tokens";
 import { ReceiveTokens } from "@/components/receive-tokens";
 import { CreateTokenAccount } from "@/components/create-token-account";
 import { TokenActivity } from "@/components/token-activity";
-import { getTokenInfo } from "@/lib/token-utils";
 import axios from "axios";
 
 // Define interfaces
@@ -83,7 +82,7 @@ export default function Analytics() {
   const [selectedTokenMint, setSelectedTokenMint] = useState<string>("");
 
   // Function to refresh wallet data
-  const refreshWallet = async () => {
+  const refreshWallet = useCallback(async () => {
     if (!publicKey) return;
 
     setIsLoading(true);
@@ -112,9 +111,10 @@ export default function Analytics() {
         return {
           mint: mintAddress,
           owner: parsedInfo.owner,
-          symbol: mintAddress.slice(0, 4) + "...", // We'll use a simplification for now
+          tokenAmount: tokenBalance,
           uiBalance: tokenBalance.uiAmount || 0,
           decimals: tokenBalance.decimals,
+          symbol: mintAddress.slice(0, 4) + "...", // We'll use a simplification for now
         };
       });
 
@@ -156,14 +156,13 @@ export default function Analytics() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [publicKey]);
 
   // Function to fetch historical data from the API
   const fetchHistoricalData = async (walletAddress: string): Promise<TokenHistoricalData[]> => {
     try {
       const response = await axios.get(`/api/historical-data?address=${walletAddress}`);
-      console.log("fetch data", response.data);
-      return response.data;
+      return response.data as TokenHistoricalData[];
     } catch (error) {
       console.error("Error fetching historical data:", error);
       return [];
@@ -177,7 +176,7 @@ export default function Analytics() {
     } else {
       setIsLoading(false);
     }
-  }, [connected, publicKey]);
+  }, [connected, publicKey, refreshWallet]);
 
   // Render wallet not connected state
   if (!connected) {

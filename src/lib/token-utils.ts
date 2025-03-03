@@ -23,11 +23,11 @@ export async function getTokenInfo(mintAddress: string): Promise<TokenInfo> {
     
     // Get mint info
     const mintInfo = await connection.getParsedAccountInfo(mintPublicKey);
-    const data = (mintInfo.value?.data as any)?.parsed?.info;
-    console.log("data", data);
+    const data = (mintInfo.value?.data && 'parsed' in mintInfo.value.data) ? mintInfo.value.data.parsed.info : null;
+    // console.log("data", data);
     const decimals = data?.decimals || 9;
     const tokenSupply = data?.supply ? (parseInt(data.supply) / Math.pow(10, decimals)) : 0;
-    console.log("token supply", tokenSupply);
+    // console.log("token supply", tokenSupply);
 
     
     // Get token accounts (holders)

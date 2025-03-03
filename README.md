@@ -2,15 +2,21 @@
 
 **`patoSOL Solana Wallet Manager`**
 
-patoSOL is a Solana wallet manager that allows users to manage their SPL tokens. It provides functionalities such as viewing token balances, historical data, minting tokens, and more.
+patoSOL is a Solana wallet manager that allows users to manage their SPL tokens. 
+It provides functionalities such as viewing token balances, historical data, minting tokens,
+and more.
 
 ## Features
 
-- **Dashboard**: Provides an overview of the user's wallet, including total supply, holders, and recent transactions.
+- **Dashboard**: Provides an overview of the user's wallet, including total supply, holders,
+  and recent transactions.
 - **Marketplace**: Allows users to browse and purchase tokens listed on the marketplace.
-- **Mint Tokens**: Enables users to mint new tokens by specifying the token name, symbol, and initial supply.
-- **My Wallet**: Displays the user's SOL balance and token balances, and provides options to send and receive tokens.
-- **Analytics**: Offers detailed analytics of the user's wallet, including token balance history, token distribution, and recent transactions.
+- **Mint Tokens**: Enables users to mint new tokens by specifying the token name, symbol,
+  and initial supply.
+- **My Wallet**: Displays the user's SOL balance and token balances, and provides options
+   to send and receive tokens.
+- **Analytics**: Offers detailed analytics of the user's wallet, including token balance history,
+  token distribution, and recent transactions.
 
 ## Pages
 
@@ -25,7 +31,8 @@ The Dashboard page provides an overview of the user's wallet on the Solana block
 
 ### Marketplace
 
-The Marketplace page allows users to browse and purchase tokens listed on the marketplace. It includes:
+The Marketplace page allows **users** to browse and purchase tokens listed on the marketplace. 
+It includes:
 
 - Token List
 - Search and Filters
@@ -34,7 +41,8 @@ The Marketplace page allows users to browse and purchase tokens listed on the ma
 
 ### Mint Tokens
 
-The Mint Tokens page enables users to mint new tokens by specifying the token name, symbol, and initial supply.
+The Mint Tokens page enables users to mint new tokens by specifying the token name, symbol, 
+and initial supply.
 
 ### My Wallet
 

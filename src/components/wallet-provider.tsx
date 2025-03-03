@@ -34,7 +34,7 @@ export function SolanaWalletProvider({ children }: { children: ReactNode }) {
           new PhantomWalletAdapter(),
           new SolflareWalletAdapter(),
       ],
-    [network]);
+    []);
     
   return (
     <ConnectionProvider endpoint={endpoint}>

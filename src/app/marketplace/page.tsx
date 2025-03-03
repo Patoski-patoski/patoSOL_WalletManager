@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, Connection } from "@solana/web3.js";
+// import { Connection } from "@solana/web3.js";
 import { AuthButton } from "@/components/auth-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,11 +57,11 @@ export default function Marketplace() {
       try {
         setIsLoading(true);
         
-        // Use RPC connection for price data (in a real app, you might use a price oracle)
-        const connection = new Connection(
-          process.env.NEXT_PUBLIC_SOLANA_RPC_URL || 'https://api.devnet.solana.com',
-          'confirmed'
-        );
+        // Using RPC connection for price data (in a real app, I'll use a price oracle)
+        // const connection = new Connection(
+        //   process.env.NEXT_PUBLIC_SOLANA_RPC_URL || 'https://api.devnet.solana.com',
+        //   'confirmed'
+        // );
         
         // Fetch data for each token in the list
         const tokenPromises = TOKEN_LIST.map(async (token) => {

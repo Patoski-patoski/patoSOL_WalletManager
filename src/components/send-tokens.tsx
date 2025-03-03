@@ -72,7 +72,7 @@ export function SendTokens({
         recipient,
         selectedToken,
         parseFloat(amount)
-      );``
+      );
 
       if (result.success) {
         setSuccess(result.message);

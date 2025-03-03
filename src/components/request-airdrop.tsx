@@ -50,6 +50,7 @@ export function RequestAirdrop({
         setError(result.message);
       }
     } catch (err) {
+      console.error("Error requesting airdrop", err);
       setError("Airdrop failed. Please try again.");
     } finally {
       setIsLoading(false);

@@ -1,8 +1,8 @@
 import {
-    Connection, PublicKey, Transaction, sendAndConfirmTransaction, LAMPORTS_PER_SOL
+    Connection, PublicKey, Transaction, LAMPORTS_PER_SOL, Signer,
 } from '@solana/web3.js';
 import {
-    getOrCreateAssociatedTokenAccount, createTransferInstruction, getMint, getAssociatedTokenAddress
+    getOrCreateAssociatedTokenAccount, createTransferInstruction, getMint,
 } from '@solana/spl-token';
 
 // Default RPC connection
@@ -21,7 +21,7 @@ type TransactionResult = {
 // ✅ Send tokens using a connected wallet
 export async function sendTokens(
     publicKey: string,
-    signTransaction: any,
+    signTransaction: (transaction: Transaction) => Promise<Transaction>,
     recipientAddress: string,
     mintAddress: string,
     amount: number
@@ -43,7 +43,7 @@ export async function sendTokens(
         // Get associated token accounts
         const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
             connection,
-            sender,
+            {publicKey: sender, secretKey: new Uint8Array()} as Signer,
             mint,
             sender
         );
@@ -51,7 +51,7 @@ export async function sendTokens(
 
         const recipientTokenAccount = await getOrCreateAssociatedTokenAccount(
             connection,
-            sender,
+            {publicKey: sender, secretKey: new Uint8Array()} as Signer,
             mint,
             recipient,
         );
@@ -90,7 +90,7 @@ export async function sendTokens(
 
 // ✅ Create a token account with a connected wallet
 export async function createTokenAccount(
-    wallet: any,
+    wallet: { publicKey: PublicKey | null },
     mintAddress: string
 ): Promise<TransactionResult> {
     try {
@@ -102,7 +102,7 @@ export async function createTokenAccount(
         // Get or create associated token account
         const tokenAccount = await getOrCreateAssociatedTokenAccount(
             connection,
-            owner,
+            { publicKey: owner, secretKey: new Uint8Array() } as Signer,
             mint,
             owner
         );

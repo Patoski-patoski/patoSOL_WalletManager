@@ -22,8 +22,6 @@ export function SolPrice() {
         }
 
         const data = await response.json();
-        console.log(data);
-        
         setPrice(data.solana.usd);
       } catch (error) {
         console.error("Error fetching SOL price:", error);
@@ -48,7 +46,7 @@ export function SolPrice() {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">
-          {isLoading ? "..." : `$${price?.toFixed(2)}`}
+          {isLoading ? "0.00" : `$${price?.toFixed(2)}`}
         </div>
       </CardContent>
     </Card>

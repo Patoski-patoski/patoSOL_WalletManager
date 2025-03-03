@@ -1,7 +1,6 @@
-// patosol/src/app/wallet/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { AuthButton } from "@/components/auth-button";
@@ -11,6 +10,7 @@ import { CreateTokenAccount } from "@/components/create-token-account";
 import { RequestAirdrop } from "@/components/request-airdrop";
 import { getTokenBalances } from "@/lib/wallet-utils";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export type TokenBalance = {
   mint: string;
@@ -33,14 +33,13 @@ export default function WalletPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Connection instance
-  const connection = new Connection(
-    process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.devnet.solana.com",
-    "confirmed"
-  );
-
-  const loadWalletData = async () => {
+  const loadWalletData = useCallback(async () => {
     if (!publicKey) return;
+
+    const connection = new Connection(
+      process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.devnet.solana.com",
+      "confirmed"
+    );
 
     try {
       setIsLoading(true);
@@ -59,7 +58,7 @@ export default function WalletPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [publicKey]);
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -69,7 +68,7 @@ export default function WalletPage() {
       setTokenBalances([]);
       setIsLoading(false);
     }
-  }, [connected, publicKey]);
+  }, [connected, publicKey, loadWalletData]);
 
   return (
     <div className="space-y-6">
@@ -166,5 +165,3 @@ export default function WalletPage() {
     </div>
   );
 }
-
-import { Button } from "@/components/ui/button";

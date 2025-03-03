@@ -17,7 +17,7 @@ import {
 
 
 export function AuthButton() {
-  const [isConnected, setIsConnected] = useState(false);
+  // const [isConnected, setIsConnected] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { publicKey, connected, disconnect } = useWallet();
 
@@ -39,8 +39,7 @@ export function AuthButton() {
     )
   }
 
-  const walletAddress = publicKey?.toString();
-
+  const walletAddress = publicKey?.toBase58();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

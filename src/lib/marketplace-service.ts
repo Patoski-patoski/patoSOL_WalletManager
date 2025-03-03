@@ -1,7 +1,7 @@
 // patosol/src/lib/marketplace-service.ts
 
-import { Connection, PublicKey } from '@solana/web3.js';
-import { getTokenInfo, TokenInfo } from './token-utils';
+// import { Connection } from '@solana/web3.js';
+import { getTokenInfo } from './token-utils';
 
 export type MarketToken = {
   name: string;
@@ -16,8 +16,9 @@ export type MarketToken = {
   transactionCount24h: number;
 };
 
-// In a real application, this would typically come from your backend API
+// In a real application, this would typically come from the backend API
 // or from token listing services like Jupiter Aggregator or Solana token lists
+// To be pplied later
 export const LISTED_TOKENS = [
   {
     name: "Pato Token",
@@ -35,10 +36,10 @@ export const LISTED_TOKENS = [
 ];
 
 // Default RPC endpoint
-const getConnection = () => new Connection(
-  process.env.NEXT_PUBLIC_SOLANA_RPC_URL || 'https://api.devnet.solana.com',
-  'confirmed'
-);
+// const getConnection = () => new Connection(
+//   process.env.NEXT_PUBLIC_SOLANA_RPC_URL || 'https://api.devnet.solana.com',
+//   'confirmed'
+// );
 
 /**
  * Fetch market data for a specific token

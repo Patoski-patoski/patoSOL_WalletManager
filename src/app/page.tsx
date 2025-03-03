@@ -2,7 +2,6 @@
 // main page.tsx
 "use client";
 
-// Update your Home component to include the activity
 import { TokenActivity } from "@/components/token-activity";
 import { useState, useEffect } from "react";
 import { AuthButton } from "../components/auth-button";

@@ -50,6 +50,7 @@ export function CreateTokenAccount({
         setError(result.message);
       }
     } catch (err) {
+      console.error("Error creating token account", err);
       setError("Failed to create token account. Please try again.");
     } finally {
       setIsLoading(false);

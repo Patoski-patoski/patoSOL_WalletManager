@@ -17,7 +17,7 @@ export default async function handler(
 
     try {
         // To be replaced with actual logic to fetch historical data
-        const historicalData: TokenHistoricalData[] = await fetchHistoricalDataFromYourSource(address);
+        const historicalData: TokenHistoricalData[] = await fetchHistoricalDataFromYourSource();
 
         if (!historicalData || historicalData.length === 0) {
             return res.status(404).json({ error: 'No historical data found' });
@@ -31,7 +31,7 @@ export default async function handler(
 }
 
 // Mock function to simulate fetching historical data
-async function fetchHistoricalDataFromYourSource(address: string): Promise<TokenHistoricalData[]> {
+async function fetchHistoricalDataFromYourSource(): Promise<TokenHistoricalData[]> {
     // To be actual data fetching logic (Deadline reaching)
     const now = new Date();
     return Array.from({ length: 30 }, (_, i) => {
