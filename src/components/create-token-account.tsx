@@ -36,7 +36,7 @@ export function CreateTokenAccount({
       setError(null);
 
       const result = await createTokenAccount(
-        publicKey.toString(),
+        { publicKey },
         mintAddress
       );
 
